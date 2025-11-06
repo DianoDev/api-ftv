@@ -93,6 +93,12 @@ class AuthController extends Controller
         }
     }
 
+    public function teste(Request $request): JsonResponse
+    {
+        return response()->json(['oi']);
+    }
+
+
     /**
      * Obter dados do usuário autenticado
      *
