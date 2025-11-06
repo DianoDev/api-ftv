@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Register\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -23,4 +24,12 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+});
+Route::group(['prefix' => 'register'], function () {
+    Route::get('/', [UsersController::class, 'index'])->name('admin.users.index');
+    Route::get('/list', [UsersController::class, 'list'])->name('admin.users.list');
+    Route::get('/{id}', [UsersController::class, 'edit'])->name('admin.users.edit');
+    Route::post('/', [UsersController::class, 'create'])->name('admin.users.create');
+    Route::post('/{id}', [UsersController::class, 'update'])->name('admin.users.update');
+    Route::delete('/{id}', [UsersController::class, 'delete'])->name('admin.users.delete');
 });
