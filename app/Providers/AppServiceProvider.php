@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Databases\Contracts\AuthContract;
+use App\Databases\Repositories\AuthRepository;
 use Illuminate\Support\ServiceProvider;
-use App\Databases\Contracts\UsersContract;
-use App\Databases\Repositories\UsersRepository;
+use App\Databases\Contracts\RegisterContract;
+use App\Databases\Repositories\RegisterRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        app()->bind(UsersContract::class, UsersRepository::class);
-        //
+        app()->bind(RegisterContract::class, RegisterRepository::class);
+        app()->bind(AuthContract::class, AuthRepository::class);
     }
 }

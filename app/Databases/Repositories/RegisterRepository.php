@@ -1,7 +1,7 @@
 <?php
 namespace App\Databases\Repositories;
 
-use App\Databases\Contracts\UsersContract;
+use App\Databases\Contracts\RegisterContract;
 use App\Databases\Models\Users;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
-class UsersRepository implements UsersContract
+class RegisterRepository implements RegisterContract
 {
     public function __construct(private Users $users)
     {
@@ -26,19 +26,6 @@ class UsersRepository implements UsersContract
     public function getAll(): Collection
     {
         return Users::query()->get();
-    }
-
-    public function paginate(array $pagination = [], array $columns = ['*']): LengthAwarePaginator
-    {
-        $query = Users::query();
-
-        if (isset($pagination['nome'])) {
-            $keyword = mb_strtolower($pagination['nome']);
-            $query->whereRaw('lower(nome) like ?', ["%{$keyword}%"]);
-        }
-
-        $query->orderBy($pagination['sort'] ?? 'nome', $pagination['sort_direction'] ?? 'asc');
-        return $query->paginate($pagination['per_page'] ?? 10, $columns, 'page', $pagination['current_page'] ?? 1);
     }
 
     public function create(array $params, bool $autoCommit = true): bool
@@ -62,33 +49,70 @@ class UsersRepository implements UsersContract
         }
     }
 
+    /**
+     * Find user by email
+     */
+    public function findByEmail(string $email): ?Users
+    {
+        return Users::where('email', $email)->first();
+    }
+
+    /**
+     * Find user by ID
+     */
+    public function findById(int $id): ?Users
+    {
+        return Users::find($id);
+    }
+
+    /**
+     * Update user
+     */
     public function update(int $id, array $params, bool $autoCommit = true): bool
     {
         $autoCommit && DB::beginTransaction();
         try {
-            $users = $this->getById($id);
-            $users->update($params);
+            $users = Users::findOrFail($id);
+
+            if (isset($params['nome'])) {
+                $users->nome = $params['nome'];
+            }
+            if (isset($params['email'])) {
+                $users->email = $params['email'];
+            }
+            if (isset($params['tipo_usuario'])) {
+                $users->tipo_usuario = $params['tipo_usuario'];
+            }
+            if (isset($params['password'])) {
+                $users->password = Hash::make($params['password']);
+            }
+
+            $users->save();
 
             $autoCommit && DB::commit();
             return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex);
+            throw new Exception('Erro ao atualizar usuário: ' . $ex->getMessage());
         }
     }
 
-    public function destroy(int $id, bool $autoCommit = true): bool
+    /**
+     * Delete user
+     */
+    public function delete(int $id, bool $autoCommit = true): bool
     {
         $autoCommit && DB::beginTransaction();
         try {
-            $users = $this->getById($id);
+            $users = Users::findOrFail($id);
             $users->delete();
+
             $autoCommit && DB::commit();
+            return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex->getMessage());
+            throw new Exception('Erro ao deletar usuário: ' . $ex->getMessage());
         }
-
-        return true;
     }
+
 }
