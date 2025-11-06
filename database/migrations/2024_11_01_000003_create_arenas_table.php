@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('arenas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('proprietario_id')->constrained('users')->onDelete('cascade');
             $table->string('nome', 100);
             $table->text('descricao')->nullable();
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->integer('total_avaliacoes')->default(0);
             $table->boolean('ativo')->default(true);
             $table->timestamps();
-            
+
             $table->index(['cidade', 'estado']);
             $table->index('ativo');
         });

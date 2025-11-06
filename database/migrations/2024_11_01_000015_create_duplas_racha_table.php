@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('duplas_racha', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('racha_id')->constrained('rachas')->onDelete('cascade');
             $table->integer('numero_dupla');
             $table->foreignUuid('jogador1_id')->constrained('users')->onDelete('cascade');

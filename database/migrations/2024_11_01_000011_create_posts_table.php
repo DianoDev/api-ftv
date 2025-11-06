@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 30)->nullable();
             $table->text('conteudo')->nullable();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('curtidas')->default(0);
             $table->integer('visualizacoes')->default(0);
             $table->timestamps();
-            
+
             $table->index(['usuario_id', 'created_at']);
         });
     }

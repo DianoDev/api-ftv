@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('avaliacoes', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('avaliador_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 30);
             $table->uuid('referencia_id');

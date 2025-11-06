@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('procura_parceiros', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('criador_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('quadra_id')->nullable()->constrained('quadras')->onDelete('set null');
             $table->date('data_jogo');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('descricao')->nullable();
             $table->string('status', 30)->default('aberto');
             $table->timestamps();
-            
+
             $table->index(['status', 'data_jogo']);
         });
     }

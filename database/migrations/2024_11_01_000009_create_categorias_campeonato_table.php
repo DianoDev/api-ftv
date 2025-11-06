@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categorias_campeonato', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('campeonato_id')->constrained('campeonatos')->onDelete('cascade');
             $table->string('nome', 100);
             $table->string('genero', 30)->nullable();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('premiacao')->nullable();
             $table->string('status', 30)->default('inscricoes_abertas');
             $table->timestamps();
-            
+
             $table->index('campeonato_id');
         });
     }

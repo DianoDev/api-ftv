@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('participantes_solicitacao', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('solicitacao_id')->constrained('solicitacoes_racha')->onDelete('cascade');
             $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('status', 30)->default('interessado');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('observacoes')->nullable();
             $table->timestamp('confirmado_em')->nullable();
             $table->timestamps();
-            
+
             $table->index(['solicitacao_id', 'status']);
             $table->unique(['solicitacao_id', 'usuario_id']);
         });

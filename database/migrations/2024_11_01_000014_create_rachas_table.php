@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rachas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('criador_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('quadra_id')->constrained('quadras')->onDelete('cascade');
             $table->foreignUuid('juiz_id')->nullable()->constrained('users')->onDelete('set null');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('observacoes')->nullable();
             $table->timestamp('finalizado_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('status');
             $table->index('data_racha');
             $table->index('quadra_id');

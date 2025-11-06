@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('professores', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->json('certificacoes')->nullable();
             $table->integer('experiencia_anos')->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('total_avaliacoes')->default(0);
             $table->boolean('ativo')->default(true);
             $table->timestamps();
-            
+
             $table->unique('user_id');
             $table->index('ativo');
         });

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jogadores', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('nivel', 20)->default('iniciante');
             $table->string('lado_preferido', 20)->default('ambos');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('posicao_preferida', 50)->nullable();
             $table->string('nivel_jogo', 20)->nullable();
             $table->timestamps();
-            
+
             $table->index('ranking');
             $table->index('nivel');
             $table->unique('user_id');

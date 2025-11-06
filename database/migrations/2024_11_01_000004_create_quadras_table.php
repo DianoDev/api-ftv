@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('quadras', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('arena_id')->constrained('arenas')->onDelete('cascade');
             $table->string('nome', 50);
             $table->string('tipo_piso', 30)->nullable();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('ativa')->default(true);
             $table->text('observacoes')->nullable();
             $table->timestamps();
-            
+
             $table->index('arena_id');
             $table->index('ativa');
         });

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campeonatos', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('organizador_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('arena_id')->nullable()->constrained('arenas')->onDelete('set null');
             $table->string('nome', 200);
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('status', 30)->default('inscricoes_abertas');
             $table->text('foto_capa')->nullable();
             $table->timestamps();
-            
+
             $table->index(['status', 'data_inicio']);
         });
     }

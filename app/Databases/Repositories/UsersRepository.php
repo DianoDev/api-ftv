@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 
 class UsersRepository implements UsersContract
 {
@@ -46,9 +47,9 @@ class UsersRepository implements UsersContract
         try {
             $users = new Users([
                 'nome' => $params['nome'],
-                'email' => $params['nome'],
-                'tipo_usuario' => $params['nome'],
-                'password' => $params['nome']
+                'email' => $params['email'],
+                'tipo_usuario' => $params['tipo_usuario'],
+                'password' => Hash::make($params['password'])
             ]);
             $users->save();
 
@@ -56,7 +57,8 @@ class UsersRepository implements UsersContract
             return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex);
+            // Melhor tratamento de erro
+            throw new Exception('Erro ao criar usuário: ' . $ex->getMessage());
         }
     }
 

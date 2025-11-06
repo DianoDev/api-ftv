@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notificacoes', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 50);
             $table->string('titulo', 200);
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('dados')->nullable();
             $table->boolean('lida')->default(false);
             $table->timestamps();
-            
+
             $table->index(['usuario_id', 'lida']);
         });
     }

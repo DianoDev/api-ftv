@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('aulas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('professor_id')->constrained('professores')->onDelete('cascade');
             $table->foreignUuid('aluno_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('quadra_id')->nullable()->constrained('quadras')->onDelete('set null');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('pagamento_confirmado')->default(false);
             $table->text('observacoes')->nullable();
             $table->timestamps();
-            
+
             $table->index('professor_id');
             $table->index('aluno_id');
             $table->index(['data_aula', 'status']);

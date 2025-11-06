@@ -25,7 +25,7 @@ class UsersController extends Controller
         return response()->json($dados);
     }
 
-    public function create(UsersRequest $request): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $params = $request->except('_token');
         $this->usersRepository->create($params);

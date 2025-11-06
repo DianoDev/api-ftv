@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('historico_ranking', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('racha_id')->nullable()->constrained('rachas')->onDelete('set null');
             $table->integer('ranking_anterior');
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('diferenca');
             $table->string('motivo', 50)->nullable();
             $table->timestamps();
-            
+
             $table->index(['usuario_id', 'created_at']);
         });
     }

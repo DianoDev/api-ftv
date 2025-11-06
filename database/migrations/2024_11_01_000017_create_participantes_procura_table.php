@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('participantes_procura', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('procura_id')->constrained('procura_parceiros')->onDelete('cascade');
             $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('status', 30)->default('interessado');
             $table->timestamps();
-            
+
             $table->unique(['procura_id', 'usuario_id']);
         });
     }
