@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('aulas', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('professor_id')->constrained('professores')->onDelete('cascade');
-            $table->foreignUuid('aluno_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('quadra_id')->nullable()->constrained('quadras')->onDelete('set null');
+            $table->foreignId('professor_id')->constrained('professores')->onDelete('cascade');
+            $table->foreignId('aluno_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('quadra_id')->nullable()->constrained('quadras')->onDelete('set null');
             $table->date('data_aula');
             $table->time('hora_inicio');
             $table->time('hora_fim');

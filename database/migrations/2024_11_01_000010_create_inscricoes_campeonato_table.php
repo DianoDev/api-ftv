@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('inscricoes_campeonato', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('categoria_id')->constrained('categorias_campeonato')->onDelete('cascade');
-            $table->foreignUuid('jogador1_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('jogador2_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('jogador3_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('jogador4_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('categoria_id')->constrained('categorias_campeonato')->onDelete('cascade');
+            $table->foreignId('jogador1_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('jogador2_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('jogador3_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('jogador4_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('nome_equipe', 100)->nullable();
             $table->string('status', 30)->default('pendente');
             $table->boolean('pagamento_confirmado')->default(false);

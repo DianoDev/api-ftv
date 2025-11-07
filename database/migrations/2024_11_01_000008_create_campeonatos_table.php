@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('campeonatos', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('organizador_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('arena_id')->nullable()->constrained('arenas')->onDelete('set null');
+            $table->foreignId('organizador_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('arena_id')->nullable()->constrained('arenas')->onDelete('set null');
             $table->string('nome', 200);
             $table->text('descricao')->nullable();
             $table->date('data_inicio');

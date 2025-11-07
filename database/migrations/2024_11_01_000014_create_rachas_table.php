@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('rachas', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('criador_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('quadra_id')->constrained('quadras')->onDelete('cascade');
-            $table->foreignUuid('juiz_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('criador_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('quadra_id')->constrained('quadras')->onDelete('cascade');
+            $table->foreignId('juiz_id')->nullable()->constrained('users')->onDelete('set null');
             $table->dateTime('data_racha');
             $table->integer('duracao_minutos')->default(60);
             $table->decimal('valor_total', 10, 2);

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('arenas', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('proprietario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('proprietario_id')->constrained('users')->onDelete('cascade');
             $table->string('nome', 100);
             $table->text('descricao')->nullable();
             $table->string('cnpj', 20)->nullable();

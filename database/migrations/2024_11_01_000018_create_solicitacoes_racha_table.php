@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('solicitacoes_racha', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('criador_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('arena_id')->constrained('arenas')->onDelete('cascade');
+            $table->foreignId('criador_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('arena_id')->constrained('arenas')->onDelete('cascade');
             $table->date('data_jogo');
             $table->time('hora_inicio');
             $table->time('hora_fim');
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->decimal('valor_estimado', 10, 2)->nullable();
             $table->decimal('valor_por_pessoa', 10, 2)->nullable();
             $table->string('status', 30)->default('aberta');
-            $table->foreignUuid('reserva_id')->nullable()->constrained('reservas')->onDelete('set null');
-            $table->foreignUuid('quadra_alocada_id')->nullable()->constrained('quadras')->onDelete('set null');
+            $table->foreignId('reserva_id')->nullable()->constrained('reservas')->onDelete('set null');
+            $table->foreignId('quadra_alocada_id')->nullable()->constrained('quadras')->onDelete('set null');
             $table->string('metodo_pagamento', 50)->nullable();
             $table->string('payment_intent_id', 200)->nullable();
             $table->string('nivel_sugerido', 30)->nullable();

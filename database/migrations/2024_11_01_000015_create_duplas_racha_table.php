@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('duplas_racha', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('racha_id')->constrained('rachas')->onDelete('cascade');
+            $table->foreignId('racha_id')->constrained('rachas')->onDelete('cascade');
             $table->integer('numero_dupla');
-            $table->foreignUuid('jogador1_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('jogador2_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('jogador1_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('jogador2_id')->constrained('users')->onDelete('cascade');
             $table->integer('pontos_ranking_ganhos')->default(0);
             $table->timestamps();
 

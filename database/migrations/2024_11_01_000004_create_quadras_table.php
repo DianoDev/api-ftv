@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('quadras', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('arena_id')->constrained('arenas')->onDelete('cascade');
+            $table->foreignId('arena_id')->constrained('arenas')->onDelete('cascade');
             $table->string('nome', 50);
             $table->string('comprimento')->nullable();
             $table->string('largura')->nullable();

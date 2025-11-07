@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('historico_ranking', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('racha_id')->nullable()->constrained('rachas')->onDelete('set null');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('racha_id')->nullable()->constrained('rachas')->onDelete('set null');
             $table->integer('ranking_anterior');
             $table->integer('ranking_novo');
             $table->integer('diferenca');

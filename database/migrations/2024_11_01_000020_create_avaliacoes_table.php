@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('avaliacoes', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('avaliador_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('avaliador_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 30);
             $table->uuid('referencia_id');
             $table->integer('nota');

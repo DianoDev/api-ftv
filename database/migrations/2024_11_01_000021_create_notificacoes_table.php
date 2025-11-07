@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('notificacoes', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 50);
             $table->string('titulo', 200);
             $table->text('mensagem')->nullable();

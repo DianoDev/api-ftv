@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('quadra_id')->constrained('quadras')->onDelete('cascade');
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('quadra_id')->constrained('quadras')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->date('data_reserva');
             $table->time('hora_inicio');
             $table->time('hora_fim');

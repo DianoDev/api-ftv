@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('tipo', 30)->nullable();
             $table->text('conteudo')->nullable();
             $table->text('midia_url')->nullable();

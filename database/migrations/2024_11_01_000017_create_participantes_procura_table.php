@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('participantes_procura', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('procura_id')->constrained('procura_parceiros')->onDelete('cascade');
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('procura_id')->constrained('procura_parceiros')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('status', 30)->default('interessado');
             $table->timestamps();
 

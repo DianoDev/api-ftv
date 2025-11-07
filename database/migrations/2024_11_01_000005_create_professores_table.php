@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('professores', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->json('certificacoes')->nullable();
             $table->integer('experiencia_anos')->nullable();
             $table->json('especialidades')->nullable();

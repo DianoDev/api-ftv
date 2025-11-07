@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('participantes_solicitacao', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('solicitacao_id')->constrained('solicitacoes_racha')->onDelete('cascade');
-            $table->foreignUuid('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('solicitacao_id')->constrained('solicitacoes_racha')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->string('status', 30)->default('interessado');
             $table->decimal('valor_pago', 10, 2)->default(0);
             $table->boolean('pagamento_confirmado')->default(false);
