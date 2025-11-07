@@ -1,129 +1,126 @@
 <?php
 
-namespace App\Http\Controllers\Users;
+namespace App\Http\Controllers\Api;
 
-use App\Databases\Contracts\AuthContract;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     /**
-     * Injeção de dependência da interface do repository
-     */
-    public function __construct(private readonly AuthContract $authRepository)
-    {
-
-    }
-
-    /**
-     * Login do usuário
+     * Login do usuário e geração do token
      *
      * @param Request $request
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function login(Request $request): JsonResponse
     {
-        try {
-            // Tenta autenticar o usuário usando o repository
-            $user = $this->authRepository->attemptLogin(
-                $request->email,
-                $request->password
-            );
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-            // Se a autenticação falhar
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Email ou senha incorretos'
-                ], 401);
-            }
+        $user = User::where('email', $request->email)->first();
 
-            // Autenticação bem-sucedida
-            // TODO: Aqui você pode gerar um token (JWT, Sanctum, etc.)
-            return response()->json([
-                'success' => true,
-                'message' => 'Login realizado com sucesso!',
-                'data' => [
-                    'user' => [
-                        'id' => $user->id,
-                        'nome' => $user->nome,
-                        'email' => $user->email,
-                        'tipo_usuario' => $user->tipo_usuario,
-                    ],
-                    // TODO: Adicionar token aqui
-                    // 'token' => $token,
-                ]
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao realizar login',
-                'error' => $e->getMessage()
-            ], 500);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['As credenciais fornecidas estão incorretas.'],
+            ]);
         }
+
+        // Revoga todos os tokens anteriores do usuário
+        $user->tokens()->delete();
+
+        // Cria um novo token
+        $token = $user->createToken('mobile-app')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login realizado com sucesso',
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'token' => $token,
+            ],
+        ], 200);
     }
 
     /**
-     * Logout do usuário
+     * Logout do usuário (revoga o token atual)
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {
-        try {
-            // TODO: Implementar lógica de logout
-            // Invalidar token, limpar sessão, etc.
+        // Revoga o token atual usado na requisição
+        $request->user()->currentAccessToken()->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Logout realizado com sucesso!'
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao realizar logout',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Logout realizado com sucesso',
+        ], 200);
     }
-
-    public function teste(Request $request): JsonResponse
-    {
-        return response()->json(['oi']);
-    }
-
 
     /**
-     * Obter dados do usuário autenticado
+     * Retorna os dados do usuário autenticado
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function me(Request $request): JsonResponse
     {
-        try {
-            // TODO: Implementar lógica para pegar usuário do token
-            // $user = $request->user();
+        $user = $request->user();
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    // 'user' => $user
-                ]
-            ], 200);
+        return response()->json([
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ],
+        ], 200);
+    }
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao buscar dados do usuário',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    /**
+     * Registro de novo usuário
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = $user->createToken('mobile-app')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Usuário registrado com sucesso',
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'token' => $token,
+            ],
+        ], 201);
     }
 }
