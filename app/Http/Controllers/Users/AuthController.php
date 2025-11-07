@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Users;
 
+use App\Databases\Models\Arenas;
+use App\Databases\Models\Jogadores;
+use App\Databases\Models\Professores;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Databases\Models\Users;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +28,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = Users::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -38,7 +41,15 @@ class AuthController extends Controller
 
         // Cria um novo token
         $token = $user->createToken('mobile-app')->plainTextToken;
-
+        if ($user->tipo_usuario === 'jogador'){
+            $subtipo = Jogadores::where('user_id', $user->id)->first();
+        }
+        if ($user->tipo_usuario === 'arena'){
+            $subtipo = Arenas::where('user_id', $user->id)->first();
+        }
+        if ($user->tipo_usuario === 'professor'){
+            $subtipo = Professores::where('user_id', $user->id)->first();
+        }
         return response()->json([
             'message' => 'Login realizado com sucesso',
             'data' => [
@@ -46,11 +57,19 @@ class AuthController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'tipo_usuario' => $user->tipo_usuario,
+                    'subtipo' => $subtipo ?? null,
                 ],
                 'token' => $token,
             ],
         ], 200);
     }
+
+    public function teste(Request $request): JsonResponse
+    {
+        return response()->json(['oi']);
+    }
+
 
     /**
      * Logout do usuário (revoga o token atual)
@@ -103,7 +122,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
+        $user = Users::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),

@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('arena_id')->constrained('arenas')->onDelete('cascade');
             $table->string('nome', 50);
-            $table->string('tipo_piso', 30)->nullable();
+            $table->string('comprimento')->nullable();
+            $table->string('largura')->nullable();
             $table->decimal('valor_hora', 10, 2)->nullable();
             $table->boolean('coberta')->default(false);
             $table->boolean('iluminacao')->default(true);

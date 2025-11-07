@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Databases\Contracts\QuadrasContract;
 use App\Http\Requests\QuadrasRequest;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class QuadrasController extends Controller
 {
@@ -15,45 +14,120 @@ class QuadrasController extends Controller
     {
     }
 
-    public function index(): Response
-    {
-        return Inertia::render('Admin/Quadras/QuadrasIndex');
-    }
-
     public function list(Request $request): JsonResponse
     {
-        $dados = $this->quadrasRepository->paginate($request->all())->toArray();
+        // Pega o usuário autenticado
+        $user = Auth::user();
+
+        // Se for arena, filtra apenas suas quadras
+        if ($user && isset($user->id)) {
+            $filters = $request->all();
+            // Adiciona o filtro de arena_id automaticamente
+            $filters['arena_id'] = $user->id; // ou $user->arena_id, dependendo da sua estrutura
+
+            $dados = $this->quadrasRepository->paginate($filters)->toArray();
+        } else {
+            $dados = $this->quadrasRepository->paginate($request->all())->toArray();
+        }
+
         $dados['filter_options'] = [
             'arena_id' => [
                 'type' => 'text',
             ]
         ];
+
         return response()->json($dados);
     }
 
     public function create(QuadrasRequest $request): JsonResponse
     {
+        // Pega o usuário autenticado via token Sanctum
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuário não autenticado'
+            ], 401);
+        }
+
+        // Prepara os dados
         $params = $request->except('_token');
+        $params['arena_id'] = $user->id; // OU $user->arena_id
+
+        // Cria a quadra
         $this->quadrasRepository->create($params);
-        return response()->json(['success' => true, 'message' => 'Quadras criado com sucesso!']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quadra criada com sucesso!',
+            'data' => [
+                'arena_id' => $params['arena_id'],
+                'nome' => $params['nome']
+            ]
+        ]);
     }
 
     public function edit(int $id): JsonResponse
     {
+        $user = Auth::user();
         $registro = $this->quadrasRepository->getById($id);
+
+        // Verifica se a quadra pertence à arena autenticada
+        if ($user && $registro->arena_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para acessar esta quadra'
+            ], 403);
+        }
+
         return response()->json($registro);
     }
 
     public function update(QuadrasRequest $request, int $id): JsonResponse
     {
+        $user = Auth::user();
+        $registro = $this->quadrasRepository->getById($id);
+
+        // Verifica se a quadra pertence à arena autenticada
+        if ($user && $registro->arena_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para atualizar esta quadra'
+            ], 403);
+        }
+
         $params = $request->validated();
+
+        // Garante que o arena_id não seja alterado
+        unset($params['arena_id']);
+
         $this->quadrasRepository->update($id, $params);
-        return response()->json(['success' => true, 'message' => 'Quadras atualizado com sucesso!']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quadra atualizada com sucesso!'
+        ]);
     }
 
     public function delete(int $id): JsonResponse
     {
+        $user = Auth::user();
+        $registro = $this->quadrasRepository->getById($id);
+
+        // Verifica se a quadra pertence à arena autenticada
+        if ($user && $registro->arena_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para excluir esta quadra'
+            ], 403);
+        }
+
         $this->quadrasRepository->destroy($id);
-        return response()->json(['success' => true, 'message' => 'Quadras excluído com sucesso!']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quadra excluída com sucesso!'
+        ]);
     }
 }

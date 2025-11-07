@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Professores extends Model
 {
-    use SoftDeletes;
-
     protected $primaryKey = "id";
     protected $table = 'professores';
     public string $sequence = 'professores_id_seq';

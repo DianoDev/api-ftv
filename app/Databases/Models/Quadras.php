@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quadras extends Model
 {
-    use SoftDeletes;
-
     protected $primaryKey = "id";
     protected $table = 'quadras';
     public string $sequence = 'quadras_id_seq';
