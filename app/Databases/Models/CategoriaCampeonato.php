@@ -5,10 +5,10 @@ namespace App\Databases\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Campeonatos extends Model
+class CategoriaCampeonato extends Model
 {
     protected $primaryKey = "id";
-    protected $table = 'campeonatos';
-    public string $sequence = 'campeonatos_id_seq';
+    protected $table = 'categorias_campeonato';
+    public string $sequence = 'categorias_campeonato_id_seq';
     protected $guarded = [];
 }

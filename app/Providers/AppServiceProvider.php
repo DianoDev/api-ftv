@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Databases\Contracts\AuthContract;
+use App\Databases\Contracts\CategoriaCampeonatoContract;
+use App\Databases\Repositories\CategoriaCampeonatoRepository;
 use App\Databases\Contracts\SolicitacoesRachaContract;
 use App\Databases\Repositories\SolicitacoesRachaRepository;
 use App\Databases\Contracts\RachasContract;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        app()->bind(CategoriaCampeonatoContract::class, CategoriaCampeonatoRepository::class);
         app()->bind(SolicitacoesRachaContract::class, SolicitacoesRachaRepository::class);
         app()->bind(RachasContract::class, RachasRepository::class);
         app()->bind(QuadrasContract::class, QuadrasRepository::class);

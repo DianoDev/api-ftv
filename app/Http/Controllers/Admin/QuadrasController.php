@@ -97,8 +97,7 @@ class QuadrasController extends Controller
             ], 403);
         }
 
-        $params = $request->validated();
-
+        $params = $request->except('_token');
         // Garante que o arena_id não seja alterado
         unset($params['arena_id']);
 

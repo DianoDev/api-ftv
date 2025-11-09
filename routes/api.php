@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ArenasController;
 use App\Http\Controllers\Admin\AulasController;
 use App\Http\Controllers\Admin\CampeonatosController;
+use App\Http\Controllers\Admin\CategoriaCampeonatoController;
 use App\Http\Controllers\Admin\JogadoresController;
 use App\Http\Controllers\Admin\ProfessoresController;
 use App\Http\Controllers\Admin\QuadrasController;
@@ -89,6 +90,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [QuadrasController::class, 'create'])->name('quadras.create');
         Route::post('/{id}', [QuadrasController::class, 'update'])->name('quadras.update');
         Route::delete('/{id}', [QuadrasController::class, 'delete'])->name('quadras.delete');
+    });
+    // Rotas de Categorias de Campeonato
+    Route::group(['prefix' => 'categorias-campeonato'], function () {
+        Route::get('/list', [CategoriaCampeonatoController::class, 'list'])->name('categorias_campeonato.list');
+        Route::get('/{id}', [CategoriaCampeonatoController::class, 'edit'])->name('categorias_campeonato.edit');
+        Route::post('/', [CategoriaCampeonatoController::class, 'create'])->name('categorias_campeonato.create');
+        Route::post('/{id}', [CategoriaCampeonatoController::class, 'update'])->name('categorias_campeonato.update');
+        Route::delete('/{id}', [CategoriaCampeonatoController::class, 'delete'])->name('categorias_campeonato.delete');
     });
     Route::group(['prefix' => 'rachas'], function () {
         Route::get('/', [RachasController::class, 'index'])->name('rachas.index');

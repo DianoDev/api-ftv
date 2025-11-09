@@ -45,7 +45,29 @@ class ArenasRepository implements ArenasContract
         $autoCommit && DB::beginTransaction();
         try {
             $arenas = new Arenas([
-                'nome' => $params['nome']
+                // Campos obrigatórios
+                'proprietario_id' => $params['proprietario_id'],
+                'nome' => $params['nome'],
+                'endereco' => $params['endereco'],
+                'cidade' => $params['cidade'],
+                'estado' => strtoupper($params['estado']),
+
+                // Campos opcionais
+                'descricao' => $params['descricao'] ?? null,
+                'cnpj' => $params['cnpj'] ?? null,
+                'cep' => $params['cep'] ?? null,
+                'latitude' => $params['latitude'] ?? null,
+                'longitude' => $params['longitude'] ?? null,
+                'telefone' => $params['telefone'] ?? null,
+                'whatsapp' => $params['whatsapp'] ?? null,
+                'fotos' => $params['fotos'] ?? null,
+                'horario_funcionamento' => $params['horario_funcionamento'] ?? null,
+                'comodidades' => $params['comodidades'] ?? null,
+
+                // Campos com valores padrão
+                'rating' => $params['rating'] ?? 0,
+                'total_avaliacoes' => $params['total_avaliacoes'] ?? 0,
+                'ativo' => $params['ativo'] ?? true,
             ]);
             $arenas->save();
 
@@ -53,7 +75,7 @@ class ArenasRepository implements ArenasContract
             return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex);
+            throw new Exception($ex->getMessage());
         }
     }
 

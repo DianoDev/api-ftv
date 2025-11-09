@@ -31,12 +31,28 @@ class QuadrasRepository implements QuadrasContract
     {
         $query = Quadras::query();
 
+        // Filtro por arena
         if (isset($pagination['arena_id'])) {
-            $keyword = mb_strtolower($pagination['arena_id']);
-            $query->whereRaw('lower(arena_id) like ?', ["%{$keyword}%"]);
+            $query->where('arena_id', '=', $pagination['arena_id']);
         }
 
-        $query->orderBy($pagination['sort'] ?? 'arena_id', $pagination['sort_direction'] ?? 'asc');
+        // Filtro por nome
+        if (isset($pagination['nome'])) {
+            $keyword = mb_strtolower($pagination['nome']);
+            $query->whereRaw('lower(nome) like ?', ["%{$keyword}%"]);
+        }
+
+        // Filtro por ativa
+        if (isset($pagination['ativa'])) {
+            $query->where('ativa', '=', $pagination['ativa']);
+        }
+
+        // Filtro por coberta
+        if (isset($pagination['coberta'])) {
+            $query->where('coberta', '=', $pagination['coberta']);
+        }
+
+        $query->orderBy($pagination['sort'] ?? 'nome', $pagination['sort_direction'] ?? 'asc');
         return $query->paginate($pagination['per_page'] ?? 10, $columns, 'page', $pagination['current_page'] ?? 1);
     }
 
@@ -45,7 +61,22 @@ class QuadrasRepository implements QuadrasContract
         $autoCommit && DB::beginTransaction();
         try {
             $quadras = new Quadras([
-                'arena_id' => $params['arena_id']
+                // Campos obrigatórios
+                'arena_id' => $params['arena_id'],
+                'nome' => $params['nome'],
+
+                // Campos opcionais de dimensão
+                'comprimento' => $params['comprimento'] ?? null,
+                'largura' => $params['largura'] ?? null,
+                'valor_hora' => $params['valor_hora'] ?? null,
+
+                // Campos booleanos com valores padrão
+                'coberta' => $params['coberta'] ?? false,
+                'iluminacao' => $params['iluminacao'] ?? true,
+                'ativa' => $params['ativa'] ?? true,
+
+                // Campo de observações
+                'observacoes' => $params['observacoes'] ?? null,
             ]);
             $quadras->save();
 
@@ -53,7 +84,7 @@ class QuadrasRepository implements QuadrasContract
             return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex);
+            throw new Exception($ex->getMessage());
         }
     }
 
@@ -62,13 +93,40 @@ class QuadrasRepository implements QuadrasContract
         $autoCommit && DB::beginTransaction();
         try {
             $quadras = $this->getById($id);
-            $quadras->update($params);
+
+            // Atualiza apenas os campos fornecidos
+            if (isset($params['nome'])) {
+                $quadras->nome = $params['nome'];
+            }
+            if (isset($params['comprimento'])) {
+                $quadras->comprimento = $params['comprimento'];
+            }
+            if (isset($params['largura'])) {
+                $quadras->largura = $params['largura'];
+            }
+            if (isset($params['valor_hora'])) {
+                $quadras->valor_hora = $params['valor_hora'];
+            }
+            if (isset($params['coberta'])) {
+                $quadras->coberta = $params['coberta'];
+            }
+            if (isset($params['iluminacao'])) {
+                $quadras->iluminacao = $params['iluminacao'];
+            }
+            if (isset($params['ativa'])) {
+                $quadras->ativa = $params['ativa'];
+            }
+            if (isset($params['observacoes'])) {
+                $quadras->observacoes = $params['observacoes'];
+            }
+
+            $quadras->save();
 
             $autoCommit && DB::commit();
             return true;
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
-            throw new Exception($ex);
+            throw new Exception($ex->getMessage());
         }
     }
 

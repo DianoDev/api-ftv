@@ -45,7 +45,7 @@ class AuthController extends Controller
             $subtipo = Jogadores::where('user_id', $user->id)->first();
         }
         if ($user->tipo_usuario === 'arena'){
-            $subtipo = Arenas::where('user_id', $user->id)->first();
+            $subtipo = Arenas::where('proprietario_id', $user->id)->first();
         }
         if ($user->tipo_usuario === 'professor'){
             $subtipo = Professores::where('user_id', $user->id)->first();

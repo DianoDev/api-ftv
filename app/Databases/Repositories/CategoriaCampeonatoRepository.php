@@ -1,39 +1,39 @@
 <?php
 namespace App\Databases\Repositories;
 
-use App\Databases\Contracts\CampeonatosContract;
-use App\Databases\Models\Campeonatos;
+use App\Databases\Contracts\CategoriaCampeonatoContract;
+use App\Databases\Models\CategoriaCampeonato;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class CampeonatosRepository implements CampeonatosContract
+class CategoriaCampeonatoRepository implements CategoriaCampeonatoContract
 {
-    public function __construct(private Campeonatos $campeonatos)
+    public function __construct(private CategoriaCampeonato $CategoriaCampeonato)
     {
     }
 
     public function getById(int $id): Model
     {
-        return Campeonatos::query()
+        return CategoriaCampeonato::query()
             ->where('id', '=', $id)
             ->firstOrFail();
     }
 
     public function getAll(): Collection
     {
-        return Campeonatos::query()->get();
+        return CategoriaCampeonato::query()->get();
     }
 
     public function paginate(array $pagination = [], array $columns = ['*']): LengthAwarePaginator
     {
-        $query = Campeonatos::query();
+        $query = CategoriaCampeonato::query();
 
-        // Filtro por organizador
-        if (isset($pagination['organizador_id'])) {
-            $query->where('organizador_id', '=', $pagination['organizador_id']);
+        // Filtro por campeonato (essencial)
+        if (isset($pagination['campeonato_id'])) {
+            $query->where('campeonato_id', '=', $pagination['campeonato_id']);
         }
 
         // Filtro por nome
@@ -42,17 +42,22 @@ class CampeonatosRepository implements CampeonatosContract
             $query->whereRaw('lower(nome) like ?', ["%{$keyword}%"]);
         }
 
+        // Filtro por gênero
+        if (isset($pagination['genero'])) {
+            $query->where('genero', '=', $pagination['genero']);
+        }
+
+        // Filtro por nível
+        if (isset($pagination['nivel'])) {
+            $query->where('nivel', '=', $pagination['nivel']);
+        }
+
         // Filtro por status
         if (isset($pagination['status'])) {
             $query->where('status', '=', $pagination['status']);
         }
 
-        // Filtro por arena
-        if (isset($pagination['arena_id'])) {
-            $query->where('arena_id', '=', $pagination['arena_id']);
-        }
-
-        $query->orderBy($pagination['sort'] ?? 'data_inicio', $pagination['sort_direction'] ?? 'desc');
+        $query->orderBy($pagination['sort'] ?? 'nome', $pagination['sort_direction'] ?? 'asc');
         return $query->paginate($pagination['per_page'] ?? 10, $columns, 'page', $pagination['current_page'] ?? 1);
     }
 
@@ -60,24 +65,22 @@ class CampeonatosRepository implements CampeonatosContract
     {
         $autoCommit && DB::beginTransaction();
         try {
-            $campeonatos = new Campeonatos([
+            $categoria = new CategoriaCampeonato([
                 // Campos obrigatórios
-                'organizador_id' => $params['organizador_id'],
+                'campeonato_id' => $params['campeonato_id'],
                 'nome' => $params['nome'],
-                'data_inicio' => $params['data_inicio'],
-                'data_fim' => $params['data_fim'],
 
                 // Campos opcionais
-                'arena_id' => $params['arena_id'] ?? null,
-                'descricao' => $params['descricao'] ?? null,
-                'tipo' => $params['tipo'] ?? null,
-                'regras' => $params['regras'] ?? null,
-                'foto_capa' => $params['foto_capa'] ?? null,
+                'genero' => $params['genero'] ?? null,
+                'nivel' => $params['nivel'] ?? null,
+                'max_duplas' => $params['max_duplas'] ?? null,
+                'valor_inscricao' => $params['valor_inscricao'] ?? 0,
+                'premiacao' => $params['premiacao'] ?? null,
 
                 // Campo com valor padrão
                 'status' => $params['status'] ?? 'inscricoes_abertas',
             ]);
-            $campeonatos->save();
+            $categoria->save();
 
             $autoCommit && DB::commit();
             return true;
@@ -91,38 +94,32 @@ class CampeonatosRepository implements CampeonatosContract
     {
         $autoCommit && DB::beginTransaction();
         try {
-            $campeonatos = $this->getById($id);
+            $categoria = $this->getById($id);
 
             // Atualiza apenas os campos fornecidos
             if (isset($params['nome'])) {
-                $campeonatos->nome = $params['nome'];
+                $categoria->nome = $params['nome'];
             }
-            if (isset($params['descricao'])) {
-                $campeonatos->descricao = $params['descricao'];
+            if (isset($params['genero'])) {
+                $categoria->genero = $params['genero'];
             }
-            if (isset($params['data_inicio'])) {
-                $campeonatos->data_inicio = $params['data_inicio'];
+            if (isset($params['nivel'])) {
+                $categoria->nivel = $params['nivel'];
             }
-            if (isset($params['data_fim'])) {
-                $campeonatos->data_fim = $params['data_fim'];
+            if (isset($params['max_duplas'])) {
+                $categoria->max_duplas = $params['max_duplas'];
             }
-            if (isset($params['tipo'])) {
-                $campeonatos->tipo = $params['tipo'];
+            if (isset($params['valor_inscricao'])) {
+                $categoria->valor_inscricao = $params['valor_inscricao'];
             }
-            if (isset($params['regras'])) {
-                $campeonatos->regras = $params['regras'];
+            if (isset($params['premiacao'])) {
+                $categoria->premiacao = $params['premiacao'];
             }
             if (isset($params['status'])) {
-                $campeonatos->status = $params['status'];
-            }
-            if (isset($params['arena_id'])) {
-                $campeonatos->arena_id = $params['arena_id'];
-            }
-            if (isset($params['foto_capa'])) {
-                $campeonatos->foto_capa = $params['foto_capa'];
+                $categoria->status = $params['status'];
             }
 
-            $campeonatos->save();
+            $categoria->save();
 
             $autoCommit && DB::commit();
             return true;
@@ -136,8 +133,8 @@ class CampeonatosRepository implements CampeonatosContract
     {
         $autoCommit && DB::beginTransaction();
         try {
-            $campeonatos = $this->getById($id);
-            $campeonatos->delete();
+            $categoria = $this->getById($id);
+            $categoria->delete();
             $autoCommit && DB::commit();
         } catch (Exception $ex) {
             $autoCommit && DB::rollBack();
