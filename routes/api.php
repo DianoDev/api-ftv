@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\QuadrasController;
 use App\Http\Controllers\Admin\RachasController;
 use App\Http\Controllers\Admin\SolicitacoesRachaController;
 use App\Http\Controllers\Users\RegisterController;
+use App\Http\Controllers\Users\JogadorController;
+use App\Http\Controllers\Users\SolicitacaoRachaController;
+use App\Http\Controllers\Users\ArenaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Users\AuthController;
 
@@ -28,10 +31,52 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+// Rotas públicas de arenas
+Route::prefix('arenas')->group(function () {
+    Route::get('/', [ArenaController::class, 'list'])->name('arenas.public.list');
+    Route::get('/buscar', [ArenaController::class, 'buscar'])->name('arenas.public.buscar');
+    Route::get('/buscar-por-localizacao', [ArenaController::class, 'buscarPorLocalizacao'])->name('arenas.public.localizacao');
+    Route::get('/proximas', [ArenaController::class, 'buscarProximas'])->name('arenas.public.proximas');
+    Route::get('/{id}', [ArenaController::class, 'show'])->name('arenas.public.show');
+});
+
+// Rotas públicas de solicitações de racha (listagem)
+Route::prefix('solicitacoes-racha-public')->group(function () {
+    Route::get('/', [SolicitacaoRachaController::class, 'list'])->name('solicitacoes_racha.public.list');
+    Route::get('/{id}', [SolicitacaoRachaController::class, 'show'])->name('solicitacoes_racha.public.show');
+});
+
 // Rotas protegidas (requer autenticação)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Rotas do perfil de jogador
+    Route::prefix('jogador')->group(function () {
+        Route::get('/me', [JogadorController::class, 'me'])->name('jogador.me');
+        Route::post('/', [JogadorController::class, 'create'])->name('jogador.create');
+        Route::put('/', [JogadorController::class, 'update'])->name('jogador.update');
+        Route::get('/ranking', [JogadorController::class, 'ranking'])->name('jogador.ranking');
+        Route::get('/{id}', [JogadorController::class, 'show'])->name('jogador.show');
+    });
+
+    // Rotas de solicitações de racha para usuários
+    Route::prefix('minhas-solicitacoes-racha')->group(function () {
+        Route::get('/', [SolicitacaoRachaController::class, 'minhasSolicitacoes'])->name('solicitacoes_racha.user.minhas');
+        Route::post('/', [SolicitacaoRachaController::class, 'create'])->name('solicitacoes_racha.user.create');
+        Route::put('/{id}', [SolicitacaoRachaController::class, 'update'])->name('solicitacoes_racha.user.update');
+        Route::delete('/{id}', [SolicitacaoRachaController::class, 'delete'])->name('solicitacoes_racha.user.delete');
+        Route::patch('/{id}/status', [SolicitacaoRachaController::class, 'updateStatus'])->name('solicitacoes_racha.user.status');
+    });
+
+    // Rotas de participação em rachas
+    Route::prefix('solicitacoes-racha')->group(function () {
+        Route::get('/{id}', [SolicitacaoRachaController::class, 'show'])->name('solicitacoes_racha.show');
+        Route::post('/{id}/participar', [SolicitacaoRachaController::class, 'participar'])->name('solicitacoes_racha.participar');
+        Route::delete('/{id}/sair', [SolicitacaoRachaController::class, 'sair'])->name('solicitacoes_racha.sair');
+        Route::get('/{id}/jogadores-disponiveis', [SolicitacaoRachaController::class, 'jogadoresDisponiveis'])->name('solicitacoes_racha.jogadores_disponiveis');
+        Route::post('/{id}/convidar', [SolicitacaoRachaController::class, 'convidar'])->name('solicitacoes_racha.convidar');
+    });
 });
 Route::group(['prefix' => 'register'], function () {
     Route::get('/', [RegisterController::class, 'index'])->name('users.index');

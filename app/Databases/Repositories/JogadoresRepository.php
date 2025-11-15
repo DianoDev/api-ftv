@@ -45,7 +45,15 @@ class JogadoresRepository implements JogadoresContract
         $autoCommit && DB::beginTransaction();
         try {
             $jogadores = new Jogadores([
-                'user_id' => $params['user_id']
+                'user_id' => $params['user_id'],
+                'nivel' => $params['nivel'] ?? 'iniciante',
+                'lado_preferido' => $params['lado_preferido'] ?? 'ambos',
+                'ranking' => $params['ranking'] ?? 1000,
+                'total_rachas' => $params['total_rachas'] ?? 0,
+                'vitorias' => $params['vitorias'] ?? 0,
+                'derrotas' => $params['derrotas'] ?? 0,
+                'posicao_preferida' => $params['posicao_preferida'] ?? null,
+                'nivel_jogo' => $params['nivel_jogo'] ?? null,
             ]);
             $jogadores->save();
 

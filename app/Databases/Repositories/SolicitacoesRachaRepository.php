@@ -31,12 +31,39 @@ class SolicitacoesRachaRepository implements SolicitacoesRachaContract
     {
         $query = SolicitacoesRacha::query();
 
+        // Adicionar contagem de participantes
+        $query->withCount('participantes');
+
+        // Carregar relacionamento com arena
+        $query->with('arena:id,nome,cidade,estado');
+
+        // Filtrar por criador
         if (isset($pagination['criador_id'])) {
-            $keyword = mb_strtolower($pagination['criador_id']);
-            $query->whereRaw('lower(criador_id) like ?', ["%{$keyword}%"]);
+            $query->where('criador_id', $pagination['criador_id']);
         }
 
-        $query->orderBy($pagination['sort'] ?? 'criador_id', $pagination['sort_direction'] ?? 'asc');
+        // Filtrar por arena
+        if (isset($pagination['arena_id'])) {
+            $query->where('arena_id', $pagination['arena_id']);
+        }
+
+        // Filtrar por status
+        if (isset($pagination['status'])) {
+            $query->where('status', $pagination['status']);
+        }
+
+        // Filtrar por data (futuras, passadas, etc)
+        if (isset($pagination['data_jogo'])) {
+            $query->whereDate('data_jogo', $pagination['data_jogo']);
+        }
+
+        // Filtrar apenas solicitações abertas e futuras
+        if (isset($pagination['abertas']) && $pagination['abertas']) {
+            $query->where('status', 'aberta')
+                  ->where('data_jogo', '>=', now()->toDateString());
+        }
+
+        $query->orderBy($pagination['sort'] ?? 'data_jogo', $pagination['sort_direction'] ?? 'asc');
         return $query->paginate($pagination['per_page'] ?? 10, $columns, 'page', $pagination['current_page'] ?? 1);
     }
 
@@ -44,8 +71,29 @@ class SolicitacoesRachaRepository implements SolicitacoesRachaContract
     {
         $autoCommit && DB::beginTransaction();
         try {
+            // Calcular duração em horas se não foi fornecida
+            $duracao_horas = $params['duracao_horas'] ?? null;
+            if (!$duracao_horas && isset($params['hora_inicio']) && isset($params['hora_fim'])) {
+                $inicio = \Carbon\Carbon::createFromFormat('H:i', $params['hora_inicio']);
+                $fim = \Carbon\Carbon::createFromFormat('H:i', $params['hora_fim']);
+                $duracao_horas = $fim->diffInMinutes($inicio) / 60;
+            }
+
             $solicitacoesRacha = new SolicitacoesRacha([
-                'criador_id' => $params['criador_id']
+                'criador_id' => $params['criador_id'],
+                'arena_id' => $params['arena_id'],
+                'data_jogo' => $params['data_jogo'],
+                'hora_inicio' => $params['hora_inicio'],
+                'hora_fim' => $params['hora_fim'],
+                'duracao_horas' => $duracao_horas,
+                'limite_participantes' => $params['limite_participantes'],
+                'participantes_atuais' => 1, // Criador é o primeiro participante
+                'valor_estimado' => $params['valor_estimado'] ?? null,
+                'valor_por_pessoa' => $params['valor_por_pessoa'] ?? null,
+                'status' => 'aberta',
+                'nivel_sugerido' => $params['nivel_sugerido'] ?? null,
+                'descricao' => $params['descricao'] ?? null,
+                'observacoes' => $params['observacoes'] ?? null,
             ]);
             $solicitacoesRacha->save();
 

@@ -41,7 +41,7 @@ class SolicitacoesRachaController extends Controller
     public function edit(int $id): JsonResponse
     {
         $registro = $this->solicitacoesRachaRepository->getById($id);
-        return response()->json($registro);
+        return response()->json(['success' => true, 'data' => $registro]);
     }
 
     public function update(SolicitacoesRachaRequest $request, int $id): JsonResponse
