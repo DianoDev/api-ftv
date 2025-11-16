@@ -23,11 +23,6 @@ class SolicitacoesRachaController extends Controller
     public function list(Request $request): JsonResponse
     {
         $dados = $this->solicitacoesRachaRepository->paginate($request->all())->toArray();
-        $dados['filter_options'] = [
-            'criador_id' => [
-                'type' => 'text',
-            ]
-        ];
         return response()->json($dados);
     }
 

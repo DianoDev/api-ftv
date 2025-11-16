@@ -18,6 +18,7 @@ class SolicitacoesRachaRepository implements SolicitacoesRachaContract
     public function getById(int $id): Model
     {
         return SolicitacoesRacha::query()
+            ->with(['criador','participantes','arena'])
             ->where('id', '=', $id)
             ->firstOrFail();
     }
@@ -29,13 +30,10 @@ class SolicitacoesRachaRepository implements SolicitacoesRachaContract
 
     public function paginate(array $pagination = [], array $columns = ['*']): LengthAwarePaginator
     {
-        $query = SolicitacoesRacha::query();
+        $query = SolicitacoesRacha::query()->with('arena');
 
         // Adicionar contagem de participantes
         $query->withCount('participantes');
-
-        // Carregar relacionamento com arena
-        $query->with('arena:id,nome,cidade,estado');
 
         // Filtrar por criador
         if (isset($pagination['criador_id'])) {
