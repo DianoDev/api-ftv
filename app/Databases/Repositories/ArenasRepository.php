@@ -18,6 +18,7 @@ class ArenasRepository implements ArenasContract
     public function getById(int $id): Model
     {
         return Arenas::query()
+            ->with(['quadras'])
             ->where('id', '=', $id)
             ->firstOrFail();
     }

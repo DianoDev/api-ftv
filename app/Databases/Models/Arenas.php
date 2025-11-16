@@ -39,4 +39,9 @@ class Arenas extends Model
     {
         return $this->hasMany(SolicitacoesRacha::class, 'arena_id');
     }
+
+    public function quadras(): HasMany
+    {
+        return $this->hasMany(Quadras::class, 'arena_id');
+    }
 }
