@@ -13,6 +13,7 @@ use App\Http\Controllers\Users\RegisterController;
 use App\Http\Controllers\Users\JogadorController;
 use App\Http\Controllers\Users\SolicitacaoRachaController;
 use App\Http\Controllers\Users\ArenaController;
+use App\Http\Controllers\Users\AmizadeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Users\AuthController;
 
@@ -76,6 +77,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}/sair', [SolicitacaoRachaController::class, 'sair'])->name('solicitacoes_racha.sair');
         Route::get('/{id}/jogadores-disponiveis', [SolicitacaoRachaController::class, 'jogadoresDisponiveis'])->name('solicitacoes_racha.jogadores_disponiveis');
         Route::post('/{id}/convidar', [SolicitacaoRachaController::class, 'convidar'])->name('solicitacoes_racha.convidar');
+    });
+
+    // Rotas de amizade
+    Route::prefix('amizades')->group(function () {
+        Route::get('/', [AmizadeController::class, 'index'])->name('amizades.index'); // Listar amigos
+        Route::post('/enviar', [AmizadeController::class, 'enviarSolicitacao'])->name('amizades.enviar'); // Enviar solicitação
+        Route::post('/{id}/aceitar', [AmizadeController::class, 'aceitarSolicitacao'])->name('amizades.aceitar'); // Aceitar solicitação
+        Route::post('/{id}/recusar', [AmizadeController::class, 'recusarSolicitacao'])->name('amizades.recusar'); // Recusar solicitação
+        Route::get('/pendentes', [AmizadeController::class, 'solicitacoesPendentes'])->name('amizades.pendentes'); // Solicitações recebidas
+        Route::get('/enviadas', [AmizadeController::class, 'solicitacoesEnviadas'])->name('amizades.enviadas'); // Solicitações enviadas
+        Route::delete('/{amigoId}', [AmizadeController::class, 'removerAmizade'])->name('amizades.remover'); // Remover amigo
+        Route::post('/bloquear', [AmizadeController::class, 'bloquearUsuario'])->name('amizades.bloquear'); // Bloquear usuário
+        Route::delete('/bloquear/{bloqueadoId}', [AmizadeController::class, 'desbloquearUsuario'])->name('amizades.desbloquear'); // Desbloquear usuário
+        Route::get('/bloqueados', [AmizadeController::class, 'usuariosBloqueados'])->name('amizades.bloqueados'); // Listar bloqueados
+        Route::get('/verificar/{amigoId}', [AmizadeController::class, 'verificarAmizade'])->name('amizades.verificar'); // Verificar amizade
     });
 });
 Route::group(['prefix' => 'register'], function () {
