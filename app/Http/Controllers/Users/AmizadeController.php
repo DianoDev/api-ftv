@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Databases\Contracts\AmizadesContract;
 use App\Http\Requests\AmizadesRequest;
+use App\Databases\Models\Users;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 
@@ -261,6 +262,47 @@ class AmizadeController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao verificar amizade: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Buscar usuários por nome ou email
+     */
+    public function buscarUsuarios(Request $request): JsonResponse
+    {
+        try {
+            $termo = $request->get('termo', '');
+
+            if (strlen($termo) < 2) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Digite pelo menos 2 caracteres para buscar',
+                    'data' => []
+                ], 400);
+            }
+
+            $user = Auth::user();
+
+            // Buscar usuários excluindo o próprio usuário
+            $usuarios = Users::where('id', '!=', $user->id)
+                ->where(function($query) use ($termo) {
+                    $query->where('nome', 'like', "%{$termo}%")
+                          ->orWhere('email', 'like', "%{$termo}%");
+                })
+                ->select('id', 'nome', 'email')
+                ->limit(20)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $usuarios,
+                'total' => $usuarios->count()
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar usuários: ' . $e->getMessage()
             ], 500);
         }
     }

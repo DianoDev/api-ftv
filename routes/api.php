@@ -14,6 +14,7 @@ use App\Http\Controllers\Users\JogadorController;
 use App\Http\Controllers\Users\SolicitacaoRachaController;
 use App\Http\Controllers\Users\ArenaController;
 use App\Http\Controllers\Users\AmizadeController;
+use App\Http\Controllers\Users\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Users\AuthController;
 
@@ -79,10 +80,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/convidar', [SolicitacaoRachaController::class, 'convidar'])->name('solicitacoes_racha.convidar');
     });
 
+    // Rotas de usuários para amizade
+    Route::prefix('usuarios')->group(function () {
+        Route::get('/buscar', [AmizadeController::class, 'buscarUsuarios'])->name('usuarios.buscar'); // Buscar usuários
+    });
+
     // Rotas de amizade
     Route::prefix('amizades')->group(function () {
         Route::get('/', [AmizadeController::class, 'index'])->name('amizades.index'); // Listar amigos
-        Route::post('/enviar', [AmizadeController::class, 'enviarSolicitacao'])->name('amizades.enviar'); // Enviar solicitação
+        Route::get('/meus-amigos', [AmizadeController::class, 'index'])->name('amizades.meus-amigos'); // Listar amigos (alias)
+        Route::get('/solicitacoes-pendentes', [AmizadeController::class, 'solicitacoesPendentes'])->name('amizades.solicitacoes-pendentes'); // Solicitações recebidas
+        Route::post('/enviar-solicitacao', [AmizadeController::class, 'enviarSolicitacao'])->name('amizades.enviar-solicitacao'); // Enviar solicitação
+        Route::post('/enviar', [AmizadeController::class, 'enviarSolicitacao'])->name('amizades.enviar'); // Enviar solicitação (alias)
         Route::post('/{id}/aceitar', [AmizadeController::class, 'aceitarSolicitacao'])->name('amizades.aceitar'); // Aceitar solicitação
         Route::post('/{id}/recusar', [AmizadeController::class, 'recusarSolicitacao'])->name('amizades.recusar'); // Recusar solicitação
         Route::get('/pendentes', [AmizadeController::class, 'solicitacoesPendentes'])->name('amizades.pendentes'); // Solicitações recebidas
@@ -92,6 +101,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/bloquear/{bloqueadoId}', [AmizadeController::class, 'desbloquearUsuario'])->name('amizades.desbloquear'); // Desbloquear usuário
         Route::get('/bloqueados', [AmizadeController::class, 'usuariosBloqueados'])->name('amizades.bloqueados'); // Listar bloqueados
         Route::get('/verificar/{amigoId}', [AmizadeController::class, 'verificarAmizade'])->name('amizades.verificar'); // Verificar amizade
+    });
+
+    // Rotas de posts
+    Route::prefix('posts')->group(function () {
+        Route::get('/', [PostController::class, 'index'])->name('posts.index'); // Listar todos posts válidos
+        Route::get('/amigos', [PostController::class, 'postsAmigos'])->name('posts.amigos'); // Posts de amigos
+        Route::get('/meus', [PostController::class, 'meusPosts'])->name('posts.meus'); // Meus posts
+        Route::get('/{id}', [PostController::class, 'show'])->name('posts.show'); // Ver post específico
+        Route::post('/', [PostController::class, 'store'])->name('posts.store'); // Criar post
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('posts.destroy'); // Deletar post
+        Route::post('/limpar-expirados', [PostController::class, 'limparExpirados'])->name('posts.limpar'); // Limpar expirados
     });
 });
 Route::group(['prefix' => 'register'], function () {

@@ -157,6 +157,7 @@ class PostController extends Controller
             $data = [
                 'usuario_id' => $request->user()->id,
                 'conteudo' => $request->conteudo,
+                'expira_em' => now()->addHours(24), // Post expira em 24 horas
             ];
 
             // Upload da imagem se fornecida

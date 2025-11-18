@@ -29,11 +29,13 @@ class PostRepository implements PostContract
         DB::beginTransaction();
 
         try {
+
             $post = $this->model->create($data);
 
             DB::commit();
 
-            return $post;
+            // Carregar relacionamento
+            return $post->load('usuario');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -88,24 +90,12 @@ class PostRepository implements PostContract
             $query->where('usuario_id', $usuarioId)
                 ->orWhere('amigo_id', $usuarioId);
         })
-            ->where('status', Amizades::STATUS_ACEITO)
-            ->get()
-            ->map(function ($amizade) use ($usuarioId) {
-                return $amizade->usuario_id === $usuarioId
-                    ? $amizade->amigo_id
-                    : $amizade->usuario_id;
-            })
-            ->toArray();
+            ->get();
 
         // Incluir posts do próprio usuário
         $amigosIds[] = $usuarioId;
 
-        return $this->model
-            ->with('usuario')
-            ->whereIn('usuario_id', $amigosIds)
-            ->validos()
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        return $amigosIds;
     }
 
     /**
@@ -145,7 +135,6 @@ class PostRepository implements PostContract
     {
         return $this->model
             ->where('ativo', true)
-            ->where('expira_em', '<=', Carbon::now())
             ->update(['ativo' => false]);
     }
 

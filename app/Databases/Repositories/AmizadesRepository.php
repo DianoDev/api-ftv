@@ -271,11 +271,7 @@ class AmizadesRepository implements AmizadesContract
         })
         ->where('status', Amizades::STATUS_ACEITO)
         ->with(['usuario', 'amigo'])
-        ->get()
-        ->map(function ($amizade) use ($usuarioId) {
-            // Retornar sempre o amigo (não o próprio usuário)
-            return $amizade->usuario_id === $usuarioId ? $amizade->amigo : $amizade->usuario;
-        });
+        ->get();
     }
 
     public function getSolicitacoesPendentes(int $usuarioId): Collection
@@ -284,7 +280,16 @@ class AmizadesRepository implements AmizadesContract
             ->where('status', Amizades::STATUS_PENDENTE)
             ->with('usuario')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($amizade) {
+                return [
+                    'id' => $amizade->id,
+                    'usuario_id' => $amizade->usuario_id,
+                    'nome' => $amizade->usuario->nome ?? 'Nome não disponível',
+                    'email' => $amizade->usuario->email ?? '',
+                    'created_at' => $amizade->created_at,
+                ];
+            });
     }
 
     public function getSolicitacoesEnviadas(int $usuarioId): Collection
