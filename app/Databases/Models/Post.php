@@ -10,7 +10,10 @@ use Carbon\Carbon;
 class Post extends Model
 {
     use HasFactory;
-
+    protected $primaryKey = "id";
+    protected $table = 'posts';
+    public string $sequence = 'posts';
+    protected $guarded = [];
     protected $fillable = [
         'usuario_id',
         'conteudo',

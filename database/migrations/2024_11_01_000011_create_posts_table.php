@@ -11,16 +11,15 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
-            $table->string('tipo', 30)->nullable();
-            $table->text('conteudo')->nullable();
-            $table->text('midia_url')->nullable();
-            $table->text('thumbnail_url')->nullable();
-            $table->json('tags')->nullable();
-            $table->integer('curtidas')->default(0);
-            $table->integer('visualizacoes')->default(0);
+            $table->text('conteudo');
+            $table->string('imagem')->nullable();
+            $table->timestamp('expira_em');
+            $table->boolean('ativo')->default(true);
             $table->timestamps();
 
-            $table->index(['usuario_id', 'created_at']);
+            $table->index('usuario_id');
+            $table->index('expira_em');
+            $table->index(['ativo', 'expira_em']);
         });
     }
 

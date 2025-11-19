@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\ArenasController;
 use App\Http\Controllers\Admin\AulasController;
 use App\Http\Controllers\Admin\CampeonatosController;
 use App\Http\Controllers\Admin\CategoriaCampeonatoController;
+use App\Http\Controllers\Admin\ChaveamentoController;
+use App\Http\Controllers\Admin\PartidaController;
 use App\Http\Controllers\Admin\JogadoresController;
 use App\Http\Controllers\Admin\ProfessoresController;
 use App\Http\Controllers\Admin\QuadrasController;
@@ -179,6 +181,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [CategoriaCampeonatoController::class, 'create'])->name('categorias_campeonato.create');
         Route::post('/{id}', [CategoriaCampeonatoController::class, 'update'])->name('categorias_campeonato.update');
         Route::delete('/{id}', [CategoriaCampeonatoController::class, 'delete'])->name('categorias_campeonato.delete');
+    });
+
+    // Rotas de Chaveamento
+    Route::group(['prefix' => 'chaveamento'], function () {
+        Route::get('/categoria/{categoriaId}', [ChaveamentoController::class, 'buscarPorCategoria'])->name('chaveamento.categoria');
+        Route::post('/categoria/{categoriaId}/gerar-eliminacao-simples', [ChaveamentoController::class, 'gerarEliminacaoSimples'])->name('chaveamento.gerar_eliminacao_simples');
+        Route::get('/{chaveamentoId}/fases/{fase}', [ChaveamentoController::class, 'buscarPosicoesPorFase'])->name('chaveamento.posicoes_fase');
+        Route::post('/posicao/{posicaoId}/resultado', [ChaveamentoController::class, 'registrarResultado'])->name('chaveamento.registrar_resultado');
+        Route::get('/{chaveamentoId}/completo', [ChaveamentoController::class, 'verificarCompleto'])->name('chaveamento.verificar_completo');
+        Route::get('/categoria/{categoriaId}/fases', [ChaveamentoController::class, 'listarFases'])->name('chaveamento.listar_fases');
+    });
+
+    // Rotas de Partidas
+    Route::group(['prefix' => 'partidas'], function () {
+        Route::get('/{id}', [PartidaController::class, 'show'])->name('partidas.show');
+        Route::get('/categoria/{categoriaId}', [PartidaController::class, 'listarPorCategoria'])->name('partidas.categoria');
+        Route::get('/categoria/{categoriaId}/fase/{fase}', [PartidaController::class, 'listarPorFase'])->name('partidas.fase');
+        Route::get('/inscricao/{inscricaoId}', [PartidaController::class, 'listarPorInscricao'])->name('partidas.inscricao');
+        Route::post('/', [PartidaController::class, 'store'])->name('partidas.create');
+        Route::put('/{id}', [PartidaController::class, 'update'])->name('partidas.update');
+        Route::post('/{id}/iniciar', [PartidaController::class, 'iniciar'])->name('partidas.iniciar');
+        Route::post('/{id}/finalizar', [PartidaController::class, 'finalizar'])->name('partidas.finalizar');
+        Route::post('/{id}/wo', [PartidaController::class, 'registrarWO'])->name('partidas.wo');
+        Route::post('/{id}/placar', [PartidaController::class, 'atualizarPlacar'])->name('partidas.placar');
+        Route::delete('/{id}', [PartidaController::class, 'destroy'])->name('partidas.delete');
     });
     Route::group(['prefix' => 'rachas'], function () {
         Route::get('/', [RachasController::class, 'index'])->name('rachas.index');

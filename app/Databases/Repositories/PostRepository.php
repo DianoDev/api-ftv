@@ -86,16 +86,33 @@ class PostRepository implements PostContract
     public function listarPostsAmigos(int $usuarioId, int $perPage = 10)
     {
         // Buscar IDs dos amigos
-        $amigosIds = Amizades::where(function ($query) use ($usuarioId) {
+        $amizades = Amizades::where(function ($query) use ($usuarioId) {
             $query->where('usuario_id', $usuarioId)
                 ->orWhere('amigo_id', $usuarioId);
         })
+            ->where('status', 'aceito')
             ->get();
+
+        // Extrair IDs dos amigos
+        $amigosIds = [];
+        foreach ($amizades as $amizade) {
+            if ($amizade->usuario_id == $usuarioId) {
+                $amigosIds[] = $amizade->amigo_id;
+            } else {
+                $amigosIds[] = $amizade->usuario_id;
+            }
+        }
 
         // Incluir posts do próprio usuário
         $amigosIds[] = $usuarioId;
 
-        return $amigosIds;
+        // Buscar posts dos amigos e do próprio usuário
+        return $this->model
+            ->with('usuario')
+            ->whereIn('usuario_id', $amigosIds)
+            ->validos()
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     /**

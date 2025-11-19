@@ -25,6 +25,10 @@ use App\Databases\Contracts\AmizadesContract;
 use App\Databases\Repositories\AmizadesRepository;
 use App\Databases\Contracts\PostContract;
 use App\Databases\Repositories\PostRepository;
+use App\Databases\Contracts\ChaveamentoContract;
+use App\Databases\Repositories\ChaveamentoRepository;
+use App\Databases\Contracts\PartidaContract;
+use App\Databases\Repositories\PartidaRepository;
 use App\Databases\Repositories\AuthRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Databases\Contracts\RegisterContract;
@@ -56,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(AulasContract::class, AulasRepository::class);
         app()->bind(AmizadesContract::class, AmizadesRepository::class);
         app()->bind(PostContract::class, PostRepository::class);
+        app()->bind(ChaveamentoContract::class, ChaveamentoRepository::class);
+        app()->bind(PartidaContract::class, PartidaRepository::class);
         app()->bind(RegisterContract::class, RegisterRepository::class);
         app()->bind(AuthContract::class, AuthRepository::class);
     }

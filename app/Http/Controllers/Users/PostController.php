@@ -135,38 +135,12 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'conteudo' => 'required|string|max:500',
-                'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
-            ], [
-                'conteudo.required' => 'O conteúdo é obrigatório',
-                'conteudo.max' => 'O conteúdo deve ter no máximo 500 caracteres',
-                'imagem.image' => 'O arquivo deve ser uma imagem',
-                'imagem.mimes' => 'A imagem deve ser do tipo: jpeg, png, jpg ou gif',
-                'imagem.max' => 'A imagem deve ter no máximo 5MB',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Erro de validação',
-                    'errors' => $validator->errors(),
-                ], 422);
-            }
 
             $data = [
                 'usuario_id' => $request->user()->id,
                 'conteudo' => $request->conteudo,
                 'expira_em' => now()->addHours(24), // Post expira em 24 horas
             ];
-
-            // Upload da imagem se fornecida
-            if ($request->hasFile('imagem')) {
-                $imagem = $request->file('imagem');
-                $nomeArquivo = time() . '_' . uniqid() . '.' . $imagem->getClientOriginalExtension();
-                $path = $imagem->storeAs('posts', $nomeArquivo, 'public');
-                $data['imagem'] = $path;
-            }
 
             $post = $this->postRepository->criar($data);
 
