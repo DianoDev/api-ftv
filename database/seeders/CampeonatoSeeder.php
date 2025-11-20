@@ -14,7 +14,7 @@ class CampeonatoSeeder extends Seeder
     public function run(): void
     {
         $now = Carbon::now();
-        
+
         // Criar 3 campeonatos
         $campeonatos = [
             [
@@ -25,7 +25,8 @@ class CampeonatoSeeder extends Seeder
                 'descricao' => 'Primeiro torneio oficial do circuito regional de beach tennis.',
                 'data_inicio' => $now->copy()->addDays(15)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(17)->format('Y-m-d'),
-                'tipo' => 'profissional',
+                'tipo' => 'eliminatorias',
+                'tipo_inscricao' => 'solo',
                 'regras' => 'Formato eliminação simples. Melhor de 3 sets. Tie-break em 6x6.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -39,7 +40,8 @@ class CampeonatoSeeder extends Seeder
                 'descricao' => 'Torneio aberto para todas as categorias.',
                 'data_inicio' => $now->copy()->addDays(30)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(32)->format('Y-m-d'),
-                'tipo' => 'amador',
+                'tipo' => 'eliminatorias_com_repescagem',
+                'tipo_inscricao' => 'solo',
                 'regras' => 'Formato grupos + eliminatórias. Melhor de 3 sets.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -53,7 +55,8 @@ class CampeonatoSeeder extends Seeder
                 'descricao' => 'Torneio tradicional de Rondonópolis.',
                 'data_inicio' => $now->copy()->addDays(45)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(47)->format('Y-m-d'),
-                'tipo' => 'misto',
+                'tipo' => 'eliminatorias_com_repescagem',
+                'tipo_inscricao' => 'dupla',
                 'regras' => 'Eliminação simples. Sets de 9 games.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -166,12 +169,12 @@ class CampeonatoSeeder extends Seeder
 
         // Criar algumas inscrições
         $inscricoes = [];
-        
+
         // Categoria 1 - Masculino A (Campeonato 1)
         $duplasMasculinoA = [
             [1, 3], [5, 7], [9, 11], [13, 15], [17, 19], [2, 4]
         ];
-        
+
         foreach ($duplasMasculinoA as $dupla) {
             $inscricoes[] = [
                 'categoria_id' => 1,
@@ -189,7 +192,7 @@ class CampeonatoSeeder extends Seeder
         $duplasFemininoA = [
             [2, 4], [6, 8], [10, 12], [14, 16]
         ];
-        
+
         foreach ($duplasFemininoA as $dupla) {
             $inscricoes[] = [
                 'categoria_id' => 2,
@@ -207,7 +210,7 @@ class CampeonatoSeeder extends Seeder
         $duplasMasculinoB = [
             [1, 2], [3, 4], [5, 6], [7, 8]
         ];
-        
+
         foreach ($duplasMasculinoB as $dupla) {
             $inscricoes[] = [
                 'categoria_id' => 4,

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('data_inicio');
             $table->date('data_fim');
             $table->string('tipo', 30)->nullable();
+            $table->string('tipo_inscricao')->nullable();
             $table->text('regras')->nullable();
             $table->string('status', 30)->default('inscricoes_abertas');
             $table->text('foto_capa')->nullable();
