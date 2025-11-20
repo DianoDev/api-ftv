@@ -22,8 +22,14 @@ class QuadrasController extends Controller
         // Se for arena, filtra apenas suas quadras
         if ($user && isset($user->id)) {
             $filters = $request->all();
-            // Adiciona o filtro de arena_id automaticamente
-            $filters['arena_id'] = $user->id; // ou $user->arena_id, dependendo da sua estrutura
+
+            // Busca a arena do usuário autenticado
+            $arena = \App\Databases\Models\Arenas::where('proprietario_id', $user->id)->first();
+
+            if ($arena) {
+                // Adiciona o filtro de arena_id automaticamente
+                $filters['arena_id'] = $arena->id;
+            }
 
             $dados = $this->quadrasRepository->paginate($filters)->toArray();
         } else {
@@ -51,9 +57,19 @@ class QuadrasController extends Controller
             ], 401);
         }
 
+        // Busca a arena do usuário autenticado
+        $arena = \App\Databases\Models\Arenas::where('proprietario_id', $user->id)->first();
+
+        if (!$arena) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuário não possui uma arena cadastrada'
+            ], 403);
+        }
+
         // Prepara os dados
         $params = $request->except('_token');
-        $params['arena_id'] = $user->id; // OU $user->arena_id
+        $params['arena_id'] = $arena->id;
 
         // Cria a quadra
         $this->quadrasRepository->create($params);
@@ -73,8 +89,11 @@ class QuadrasController extends Controller
         $user = Auth::user();
         $registro = $this->quadrasRepository->getById($id);
 
+        // Busca a arena do usuário autenticado
+        $arena = \App\Databases\Models\Arenas::where('proprietario_id', $user->id)->first();
+
         // Verifica se a quadra pertence à arena autenticada
-        if ($user && $registro->arena_id !== $user->id) {
+        if ($user && $arena && $registro->arena_id !== $arena->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Você não tem permissão para acessar esta quadra'
@@ -89,8 +108,11 @@ class QuadrasController extends Controller
         $user = Auth::user();
         $registro = $this->quadrasRepository->getById($id);
 
+        // Busca a arena do usuário autenticado
+        $arena = \App\Databases\Models\Arenas::where('proprietario_id', $user->id)->first();
+
         // Verifica se a quadra pertence à arena autenticada
-        if ($user && $registro->arena_id !== $user->id) {
+        if ($user && $arena && $registro->arena_id !== $arena->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Você não tem permissão para atualizar esta quadra'
@@ -114,8 +136,11 @@ class QuadrasController extends Controller
         $user = Auth::user();
         $registro = $this->quadrasRepository->getById($id);
 
+        // Busca a arena do usuário autenticado
+        $arena = \App\Databases\Models\Arenas::where('proprietario_id', $user->id)->first();
+
         // Verifica se a quadra pertence à arena autenticada
-        if ($user && $registro->arena_id !== $user->id) {
+        if ($user && $arena && $registro->arena_id !== $arena->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Você não tem permissão para excluir esta quadra'

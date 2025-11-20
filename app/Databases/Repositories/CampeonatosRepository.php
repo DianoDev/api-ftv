@@ -18,6 +18,7 @@ class CampeonatosRepository implements CampeonatosContract
     public function getById(int $id): Model
     {
         return Campeonatos::query()
+            ->with('categoriasCampeonato.inscricaoCampeonato')
             ->where('id', '=', $id)
             ->firstOrFail();
     }

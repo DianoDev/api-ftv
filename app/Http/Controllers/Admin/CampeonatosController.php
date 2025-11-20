@@ -88,15 +88,11 @@ class CampeonatosController extends Controller
         $user = Auth::user();
         $registro = $this->campeonatosRepository->getById($id);
 
-        // Verifica se o campeonato pertence ao organizador autenticado
-        if ($user && $registro->organizador_id !== $user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Você não tem permissão para acessar este campeonato'
-            ], 403);
-        }
 
-        return response()->json($registro);
+        return response()->json([
+            'success' => true,
+            'data' => $registro
+        ]);
     }
 
     public function update(CampeonatosRequest $request, int $id): JsonResponse
