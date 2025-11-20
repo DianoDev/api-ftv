@@ -143,7 +143,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::group(['prefix' => 'campeonatos'], function () {
-        Route::get('/', [CampeonatosController::class, 'index'])->name('campeonatos.index');
         Route::get('/list', [CampeonatosController::class, 'list'])->name('campeonatos.list');
         Route::get('/{id}', [CampeonatosController::class, 'edit'])->name('campeonatos.edit');
         Route::post('/', [CampeonatosController::class, 'create'])->name('campeonatos.create');
