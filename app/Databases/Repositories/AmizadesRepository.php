@@ -269,9 +269,10 @@ class AmizadesRepository implements AmizadesContract
         return Amizades::where(function ($query) use ($usuarioId) {
             $query->where('usuario_id', $usuarioId)->orWhere('amigo_id', $usuarioId);
         })
-        ->where('status', Amizades::STATUS_ACEITO)
-        ->with(['usuario', 'amigo'])
-        ->get();
+            ->where('status', Amizades::STATUS_ACEITO)
+            ->with(['usuario', 'amigo'])
+            ->get()
+            ->map(fn($amizade) => $amizade->amigo_info);
     }
 
     public function getSolicitacoesPendentes(int $usuarioId): Collection

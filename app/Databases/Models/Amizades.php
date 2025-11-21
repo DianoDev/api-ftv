@@ -4,6 +4,7 @@ namespace App\Databases\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Amizades extends Model
 {
@@ -37,6 +38,7 @@ class Amizades extends Model
      */
     public function amigo(): BelongsTo
     {
+
         return $this->belongsTo(Users::class, 'amigo_id');
     }
 
@@ -70,5 +72,19 @@ class Amizades extends Model
     public function isPendente(): bool
     {
         return $this->status === self::STATUS_PENDENTE;
+    }
+
+    /**
+     * Retorna o amigo (a outra pessoa na relação, não o usuário atual)
+     */
+    public function getAmigoInfoAttribute(): ?Users
+    {
+        $userId = Auth::id();
+
+        if ($this->usuario_id == $userId) {
+            return $this->amigo;
+        }
+
+        return $this->usuario;
     }
 }
