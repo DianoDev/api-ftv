@@ -29,6 +29,8 @@ use App\Databases\Contracts\ChaveamentoContract;
 use App\Databases\Repositories\ChaveamentoRepository;
 use App\Databases\Contracts\PartidaContract;
 use App\Databases\Repositories\PartidaRepository;
+use App\Databases\Contracts\InscricoesCampeonatoContract;
+use App\Databases\Repositories\InscricoesCampeonatoRepository;
 use App\Databases\Repositories\AuthRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Databases\Contracts\RegisterContract;
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(PostContract::class, PostRepository::class);
         app()->bind(ChaveamentoContract::class, ChaveamentoRepository::class);
         app()->bind(PartidaContract::class, PartidaRepository::class);
+        app()->bind(InscricoesCampeonatoContract::class, InscricoesCampeonatoRepository::class);
         app()->bind(RegisterContract::class, RegisterRepository::class);
         app()->bind(AuthContract::class, AuthRepository::class);
     }

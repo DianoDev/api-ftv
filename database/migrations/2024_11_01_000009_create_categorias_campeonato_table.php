@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('nome', 100);
             $table->string('genero', 30)->nullable();
             $table->string('nivel', 30)->nullable();
+            $table->string('tipo_inscricao')->nullable();
             $table->integer('max_duplas')->nullable();
             $table->decimal('valor_inscricao', 10, 2)->default(0);
             $table->json('premiacao')->nullable();

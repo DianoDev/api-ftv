@@ -3,6 +3,7 @@
 namespace App\Databases\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,6 +14,10 @@ class CategoriaCampeonato extends Model
     public string $sequence = 'categorias_campeonato_id_seq';
     protected $guarded = [];
 
+    public function campeonato(): BelongsTo
+    {
+        return $this->belongsTo(Campeonatos::class, 'campeonato_id');
+    }
 
     public function inscricaoCampeonato(): HasMany
     {

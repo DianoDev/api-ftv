@@ -26,7 +26,6 @@ class CampeonatoSeeder extends Seeder
                 'data_inicio' => $now->copy()->addDays(15)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(17)->format('Y-m-d'),
                 'tipo' => 'eliminatorias',
-                'tipo_inscricao' => 'solo',
                 'regras' => 'Formato eliminação simples. Melhor de 3 sets. Tie-break em 6x6.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -41,7 +40,6 @@ class CampeonatoSeeder extends Seeder
                 'data_inicio' => $now->copy()->addDays(30)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(32)->format('Y-m-d'),
                 'tipo' => 'eliminatorias_com_repescagem',
-                'tipo_inscricao' => 'solo',
                 'regras' => 'Formato grupos + eliminatórias. Melhor de 3 sets.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -56,7 +54,6 @@ class CampeonatoSeeder extends Seeder
                 'data_inicio' => $now->copy()->addDays(45)->format('Y-m-d'),
                 'data_fim' => $now->copy()->addDays(47)->format('Y-m-d'),
                 'tipo' => 'eliminatorias_com_repescagem',
-                'tipo_inscricao' => 'dupla',
                 'regras' => 'Eliminação simples. Sets de 9 games.',
                 'status' => 'inscricoes_abertas',
                 'created_at' => $now,
@@ -74,6 +71,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Masculino A',
                 'genero' => 'masculino',
                 'nivel' => 'avancado',
+                'tipo_inscricao' => 'solo',
                 'max_duplas' => 16,
                 'valor_inscricao' => 150.00,
                 'premiacao' => json_encode([
@@ -90,6 +88,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Feminino A',
                 'genero' => 'feminino',
                 'nivel' => 'avancado',
+                'tipo_inscricao' => 'dupla',
                 'max_duplas' => 16,
                 'valor_inscricao' => 150.00,
                 'premiacao' => json_encode([
@@ -106,6 +105,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Misto A',
                 'genero' => 'misto',
                 'nivel' => 'avancado',
+                'tipo_inscricao' => 'solo',
                 'max_duplas' => 12,
                 'valor_inscricao' => 150.00,
                 'premiacao' => json_encode([
@@ -122,6 +122,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Masculino B',
                 'genero' => 'masculino',
                 'nivel' => 'intermediario',
+                'tipo_inscricao' => 'solo',
                 'max_duplas' => 16,
                 'valor_inscricao' => 100.00,
                 'premiacao' => json_encode([
@@ -137,6 +138,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Feminino B',
                 'genero' => 'feminino',
                 'nivel' => 'intermediario',
+                'tipo_inscricao' => 'dupla',
                 'max_duplas' => 12,
                 'valor_inscricao' => 100.00,
                 'premiacao' => json_encode([
@@ -153,6 +155,7 @@ class CampeonatoSeeder extends Seeder
                 'nome' => 'Iniciante',
                 'genero' => 'misto',
                 'nivel' => 'iniciante',
+                'tipo_inscricao' => 'solo',
                 'max_duplas' => 8,
                 'valor_inscricao' => 80.00,
                 'premiacao' => json_encode([

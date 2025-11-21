@@ -182,6 +182,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [CategoriaCampeonatoController::class, 'delete'])->name('categorias_campeonato.delete');
     });
 
+    // Rotas de Inscrições em Campeonatos
+    Route::group(['prefix' => 'inscricoes-campeonato'], function () {
+        Route::get('/minhas', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'minhasInscricoes'])->name('inscricoes_campeonato.minhas');
+        Route::get('/verificar/{categoriaId}', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'verificarInscricao'])->name('inscricoes_campeonato.verificar');
+        Route::get('/verificar-campeonato/{campeonatoId}', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'verificarInscricoesCampeonato'])->name('inscricoes_campeonato.verificar_campeonato');
+        Route::get('/{id}', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'show'])->name('inscricoes_campeonato.show');
+        Route::post('/', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'store'])->name('inscricoes_campeonato.store');
+        Route::post('/{id}/cancelar', [\App\Http\Controllers\Users\InscricoesCampeonatoController::class, 'cancel'])->name('inscricoes_campeonato.cancel');
+    });
+
     // Rotas de Chaveamento
     Route::group(['prefix' => 'chaveamento'], function () {
         Route::get('/categoria/{categoriaId}', [ChaveamentoController::class, 'buscarPorCategoria'])->name('chaveamento.categoria');
